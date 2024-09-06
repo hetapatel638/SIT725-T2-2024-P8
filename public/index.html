@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Budget Control</title>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" media="screen,projection"/>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- Socket.io -->
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script> <!-- Ensure this matches the port of your backend -->
+    <!-- External JS -->
+    <script src="script.js" defer></script>
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.ico">
+    <style>
+      body {
+        background-image: url('images/download.jpeg'); /* Update the path as needed */
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-position: center center;
+        height: 100vh;
+        margin: 0;
+      }
+      .card-title {
+        color: black !important;
+      }
+      .card:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease-in-out;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav>
+      <div class="nav-wrapper">
+        <a href="#" class="brand-logo">Budget Control</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="http://127.0.0.1:5500/public/index.html">Home</a></li>
+          <li><a href="https://www.poison.studio/">About</a></li>
+          <li><a href="https://www.linkedin.com/in/heta-patel-152169190/">LinkedIn</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h1>Budget Control</h1>
+
+      <div id="budgets"></div>
+      <p>Manage your budget effectively with our tool.</p>
+
+      <!-- Button to show the form in a modal -->
+      <button id="showFormBtn" class="btn waves-effect waves-light modal-trigger" data-target="formModal">Add Expense
+        <i class="material-icons right">add</i>
+      </button>
+
+      <!-- Added fetchExpenses button -->
+      <button id="fetchExpenses" class="btn waves-effect waves-light">Fetch Expenses</button>
+
+      <!-- Modal Structure -->
+      <div id="formModal" class="modal">
+        <div class="modal-content">
+          <h4>Add Expense</h4>
+          <form id="expenseForm">
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="expenseName" type="text" class="validate" required>
+                <label for="expenseName">Expense Name</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="expenseAmount" type="number" class="validate" required>
+                <label for="expenseAmount">Amount</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <textarea id="expenseDescription" class="materialize-textarea" required></textarea>
+                <label for="expenseDescription">Description</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="expenseTime" type="text" class="timepicker" required>
+                <label for="expenseTime">Time</label>
+              </div>
+            </div>
+            <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+              <i class="material-icons right">send</i>
+            </button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
+      </div>
+
+      <!-- Success message -->
+      <div id="successMessage" class="card-panel green lighten-4" style="display:none;">
+        <span class="green-text text-darken-4">Expense added successfully!</span>
+      </div>
+
+      <!-- Expense list -->
+      <div id="expenseList" class="section">
+        <h5>Expenses</h5>
+        <div class="row">
+          <!-- Expense cards will be added here dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.modal');
+        var instances = M.Modal.init(elems);
+
+        var timeElems = document.querySelectorAll('.timepicker');
+        var timeInstances = M.Timepicker.init(timeElems);
+      });
+
+      document.getElementById('expenseForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const name = document.getElementById('expenseName').value;
+        const amount = document.getElementById('expenseAmount').value;
+        const description = document.getElementById('expenseDescription').value;
+        const time = document.getElementById('expenseTime').value;
+
+        const response = await fetch('http://localhost:3000/expenses', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, amount, description, time }),
+        });
+
+        if (response.ok) {
+          document.getElementById('successMessage').style.display = 'block';
+          setTimeout(() => {
+            document.getElementById('successMessage').style.display = 'none';
+          }, 60000);
+        } else {
+          alert('Failed to save expense.');
+        }
+      });
+
+      document.getElementById('fetchExpenses').addEventListener('click', async () => {
+        const response = await fetch('http://localhost:3000/expenses');
+        const expenses = await response.json();
+
+        const expenseList = document.getElementById('expenseList').querySelector('.row');
+        expenseList.innerHTML = '';
+        expenses.forEach(expense => {
+          const div = document.createElement('div');
+          div.className = 'col s12 m6';
+          div.innerHTML = `
+            <div class="card">
+              <div class="card-content">
+                <span class="card-title">${expense.name}</span>
+                <p>Amount: ${expense.amount}</p>
+                <p>Description: ${expense.description}</p>
+                <p>Time: ${expense.time}</p>
+              </div>
+            </div>
+          `;
+          expenseList.appendChild(div);
+        });
+      });
+    </script>
+
+    <!--JavaScript at end of body for optimized loading-->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  </body>
+</html>

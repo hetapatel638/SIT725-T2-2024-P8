@@ -1,0 +1,41 @@
+{
+  "name": "budget-control-backend",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">   <a href=\"http://materializecss.com/\">     <img src=\"http://materializecss.com/res/materialize.svg\" width=\"150\">   </a> </p>",
+  "main": "public/startserver.js",
+  "scripts": {
+    "start": "node public/startserver.js",
+    "test": "mocha 'tests/**/*.mjs'"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "esm": "^3.2.25",
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0",
+    "mongoose": "^5.10.9",
+    "socket.io": "^4.7.5",
+    "socks": "^2.8.3"
+  },
+  "devDependencies": {
+    "@shelf/jest-mongodb": "^1.2.3",
+    "chai": "^5.1.1",
+    "chai-http": "^4.3.0",
+    "mocha": "^10.7.3",
+    "mongodb-memory-server": "^10.0.0"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hetapatel638/Sit725-t2-2024-prac6.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hetapatel638/Sit725-t2-2024-prac6/issues"
+  },
+  "homepage": "https://github.com/hetapatel638/Sit725-t2-2024-prac6#readme"
+}
